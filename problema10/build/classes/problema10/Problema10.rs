@@ -1,0 +1,2 @@
+problema10.Problema10
+problema10.Persona
