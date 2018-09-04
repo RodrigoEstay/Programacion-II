@@ -1,7 +1,3 @@
-// TODO: cuando comprador tiene mas de 20 monedas.
-//       cuando expendedor tiene mas de 50 monedas.
-//       chequear que se recibe bien el vuelto.
-//       chequear si se puede comprar con monedas de cien y 50.
 package tarea1;
 
 
@@ -14,84 +10,174 @@ public class Tarea1 {
         Expendedor ex = new Expendedor(5,5,5);
         Comprador com = new Comprador(ex);
         int i;
-        Moneda mon1[];
-        Moneda mon2[];
-        Moneda mon3[];
-        mon1 = new Moneda[20];
-        mon2 = new Moneda[20];
-        mon3 = new Moneda[20];
-        for(i=0;i<20;i=i+1){
-            mon1[i] = new MCincuenta();
-            mon2[i] = new MCien();
-            mon3[i] = new MQuinientos();
-            ex.recibirMonedas(mon1[i]);
-            ex.recibirMonedas(mon2[i]);
-            ex.recibirMonedas(mon3[i]);
-        }
+        com.chequearMonedas();
         Moneda mon = new MQuinientos();
-        com.recibirMonedas(mon);
-        com.comprar("pepsi");
+        com.recibirMonedas(mon);       
+        System.out.println(com.beber());
+        com.chequearMonedas();        
+        com.comprar("pepsi");     
+        com.chequearMonedas();
         com.recibirVuelto();
-        com.beber();
+        System.out.println(com.beber());
+        com.chequearMonedas();
+        com.comprar("sprite");
+        System.out.println(com.beber());
+        com.chequearMonedas();
+        com.recibirVuelto();
+        com.chequearMonedas();
+        Moneda m1 = new MCien();
+        Moneda m2 = new MCien();
+        Moneda m3 = new MQuinientos();
+        
+        com.recibirMonedas(m1);
+        com.recibirMonedas(m2);
+        com.recibirMonedas(m3);
+        com.chequearMonedas();
+        com.comprar("sprite");
+        System.out.println(com.beber());
+        com.chequearMonedas();
+        com.recibirVuelto();
+        com.chequearMonedas();
+        com.comprar("cocacola");
+        System.out.println(com.beber());
+        com.chequearMonedas();
+        com.recibirVuelto();
+        com.chequearMonedas();
+        
     }
     
 }
 
+//  Clase comprador, el cual interactua con Expendedor.
 class Comprador{
     private Moneda mon[];
     private Expendedor maquina;
     private Bebida bebida;
     private int nmon;
+    
+    //  En el constructor de comprador se crea un deposito interno de maximo 20
+    // monedas, y se le hace conocer la maquina expendedora con la va a
+    // interactuar.
     public Comprador(Expendedor ex){
         mon = new Moneda[20];
         nmon=0;
         maquina = ex;
+        bebida=null;
     }
+    
+    //  Metodo para recibir monedas y almacenarlas.
     public void recibirMonedas(Moneda mon){
+        if(nmon==20) nmon=nmon-1;
         this.mon[nmon]=mon;
         nmon=nmon+1;
     }
+    
+    //  Metodo para comprar bebidas a la maquina expendedora.
+    //  Notar que la maquina expendedora retorna null si con las monedas
+    // ingresadas no le alcanza para comprar una bebida, asi que el comprador
+    // le da de sus monedas hasta que le alcanze o no le queden monedas.
     public void comprar(String beb){
         do{
+            if(nmon==0) break;
             nmon=nmon-1;
             bebida=maquina.comprarBebida(mon[nmon], beb);
-            System.out.println("hola");
-            System.out.println(bebida.beber());
-        }while(bebida==null || nmon!=0);
+        }while(bebida==null);
     }
+    
+    //  Metodo para recibir su vuelto de la maquina expendedora.
     public void recibirVuelto(){
         while(true){
+            if(nmon==20) nmon=nmon-1;
             mon[nmon]=maquina.vuelto();
             if(mon[nmon]==null) break;
             nmon=nmon+1;
         }
     }
+    
+    //  Metodo que returna un string diciendo a que sabe la bebida.
     public String beber(){
+        if(bebida==null) return null;
         return bebida.beber();
+    }
+    
+    //  Metodo ocupado para saber cuantas y cuales monedas tiene el comprador
+    // en su deposito interno.
+    public void chequearMonedas(){
+        int i;
+        System.out.print("tengo "+nmon+" monedas: ");
+        for(i=0;i<nmon;i=i+1){
+            System.out.print(mon[i].obtenerValor()+" ");
+        }
+        System.out.println();
     }
 }
 
+//  La clase expendedor tiene 2 objetos internos: un deposito de bebidas
+// "deposito", un deposito de monedas "depositoMon".
 class Expendedor{
-    private Moneda monCincuenta[];
-    private Moneda monCien[];
-    private Moneda monQuinientos[];
+    private DepositoBebidas deposito;
+    private DepositoMonedas depositoMon;
+    private int valorTotal;
+    
+    //  Metodo constructor de Expendedor, se crean sus dos depositos.
+    public Expendedor(int ncoca, int nsprite, int npepsi){
+        deposito = new DepositoBebidas(ncoca, nsprite, npepsi);
+        depositoMon = new DepositoMonedas(50);
+    }
+    
+    //  Metodo para comprar bebidas de la maquina expendedora, las cuales se
+    // retiran de "deposito", y las monedas recibidas por Expendedor se mandan
+    // al deposito de monedas "depositoMon".
+    public Bebida comprarBebida(Moneda c, String t){
+        valorTotal=valorTotal+c.obtenerValor();
+        depositoMon.recibirMonedas(c);
+        if(valorTotal<350) return null;
+        valorTotal=valorTotal-350;
+        if(t=="cocacola"){
+            return deposito.retirarBebida(1);
+        }
+        else if(t=="sprite"){
+            return deposito.retirarBebida(2);
+        }
+        else if(t=="pepsi"){
+            return deposito.retirarBebida(3);
+        }
+        return null;
+    }
+    
+    //  Metodo para devolver el vuelto, este metodo retorna da a una moneda, es
+    // decir, que para obtener todo el vuelto debe ser llamado hasta que retorne
+    // null, cuendo lo hace significa que ya no queda vuelto para devolver o que
+    // ya no hay monedas en el deposito de monedas de Expendedor.
+    public Moneda vuelto(){
+        if(valorTotal>=500 && depositoMon.obtenerCantidadMon(500)>0){
+            valorTotal=valorTotal-500;
+            return depositoMon.retirarMoneda(500);
+        }
+        else if(valorTotal>=100 && depositoMon.obtenerCantidadMon(100)>0){
+            valorTotal=valorTotal-100;
+            return depositoMon.retirarMoneda(100);
+        }
+        else if(valorTotal>=50 && depositoMon.obtenerCantidadMon(50)>0){
+            valorTotal=valorTotal-50;
+            return depositoMon.retirarMoneda(50);
+        }
+        return null;
+    }
+}
+
+//  Clase que es un deposito de bebidas, usada para crear un objeto interno de
+// Expendedor.
+class DepositoBebidas{
     private Bebida coca[];
     private Bebida sprite[];
     private Bebida pepsi[];
-    private int ncincuenta;
-    private int ncien;
-    private int nquinientos;
     private int ncoca;
     private int nsprite;
     private int npepsi;
-    private int valorTotal;
-    public Expendedor(int ncoca, int nsprite, int npepsi){
-        monCincuenta = new MCincuenta[50];
-        monCien = new MCien[50];
-        monQuinientos = new MQuinientos[50];
-        ncincuenta=0;
-        ncien=0;
-        nquinientos=0;
+    
+    //  Se generan las bebidas deseadas de cada una de las 3 marcas.
+    public DepositoBebidas(int ncoca, int nsprite, int npepsi){
         this.ncoca=ncoca;
         this.nsprite=nsprite;
         this.npepsi=npepsi;
@@ -109,67 +195,103 @@ class Expendedor{
             pepsi[i] = new Pepsi(i);
         }
     }
-    public Bebida comprarBebida(Moneda c, String t){
-        valorTotal=valorTotal+c.obtenerValor();
-        recibirMonedas(c);
-        if(valorTotal<350) return null;
-        if(t=="cocacola"){
-            if(ncoca==0) return null;
-            else{
-                ncoca=ncoca-1;
-                return coca[ncoca];
-            }
+    
+    //  Metodo para retirar bebidas desde este deposito.
+    public Bebida retirarBebida(int marca){
+        if(marca==1 && ncoca!=0){
+            ncoca=ncoca-1;
+            return coca[ncoca];
         }
-        else if(t=="sprite"){
-            if(nsprite==0) return null;
-            else{
-                nsprite=nsprite-1;
-                return sprite[nsprite];
-            }
+        else if(marca==2 && nsprite!=0){
+            nsprite=nsprite-1;
+            return sprite[nsprite];
         }
-        else if(t=="pepsi"){
-            if(npepsi==0) return null;
-            else{
-                npepsi=npepsi-1;
-                return pepsi[npepsi];
-            }
-        }
-        return null;
-    }
-    public void recibirMonedas(Moneda mon){
-        if(mon.obtenerValor()==50){
-            monCincuenta[ncincuenta]=mon;
-            ncincuenta=ncincuenta+1;
-        }
-        else if(mon.obtenerValor()==100){
-            monCien[ncien]=mon;
-            ncien=ncien+1;
-        }
-        else if(mon.obtenerValor()==500){
-            monQuinientos[nquinientos]=mon;
-            nquinientos=nquinientos+1;
-        }
-    }
-    public Moneda vuelto(){
-        if(valorTotal>=500 && nquinientos>0){
-            valorTotal=valorTotal-500;
-            nquinientos=nquinientos-1;
-            return monQuinientos[nquinientos];
-        }
-        else if(valorTotal>=100 && ncien>0){
-            valorTotal=valorTotal-100;
-            ncien=ncien-1;
-            return monCien[ncien];
-        }
-        else if(valorTotal>=50 && ncincuenta>0){
-            valorTotal=valorTotal-50;
-            ncincuenta=ncincuenta-1;
-            return monCincuenta[ncincuenta];
+        else if(marca==3 && npepsi!=0){
+            npepsi=npepsi-1;
+            return pepsi[npepsi];
         }
         return null;
     }
 }
 
+//  Deposito de monedas, clase usada por Expendedor para generar un objeto
+// interno a este.
+class DepositoMonedas{
+    private Moneda monCincuenta[];
+    private Moneda monCien[];
+    private Moneda monQuinientos[];
+    private int ncincuenta;
+    private int ncien;
+    private int nquinientos;
+    
+    //  El metodo constructor recibe la cantidad de monedas que se quieren crear
+    // luego se generan la misma cantidad recibida de las 3 monedas. Notar que
+    // existe un maximo de 130 monedas que puede almacenar.
+    public DepositoMonedas(int nmon){
+        monCincuenta = new MCincuenta[130];
+        monCien = new MCien[130];
+        monQuinientos = new MQuinientos[130];
+        ncincuenta=nmon;
+        ncien=nmon;
+        nquinientos=nmon;
+        int i;
+        for(i=0;i<nmon;i=i+1){
+            monCincuenta[i] = new MCincuenta();
+            monCien[i] = new MCien();
+            monQuinientos[i] = new MQuinientos();
+        }
+    }
+    
+    //  Metodo para retirar monedas de a una, recibe el valor deseado de la
+    // moneda a retirar. Retorna null si ya no quedan monedas de ese valor o si
+    // el valor ingresado es invalido.
+    public Moneda retirarMoneda(int valor){
+        if(valor==50 && ncincuenta>0){
+            ncincuenta=ncincuenta-1;
+            return monCincuenta[ncincuenta];
+        }
+        else if(valor==100 && ncien>0){
+            ncien=ncien-1;
+            return monCien[ncien];
+        }
+        else if(valor==500 && nquinientos>0){
+            nquinientos=nquinientos-1;
+            return monQuinientos[nquinientos];
+        }
+        return null;
+    }
+    
+    //  Metodo que solamente retorna la cantidad de monedas restantes de cada
+    // valor.
+    public int obtenerCantidadMon(int valor){
+        if(valor==50) return ncincuenta;
+        else if(valor==100) return ncien;
+        else if(valor==500) return nquinientos;
+        return 0;
+    }
+    
+    //  Metodo que recibe monedas para almacenarlas en su deposito interno, si
+    // los depositos internos estan llenos, la moneda se pierde.
+    public void recibirMonedas(Moneda mon){
+        if(mon.obtenerValor()==50){
+            if(ncincuenta==130) return;
+            monCincuenta[ncincuenta]=mon;
+            ncincuenta=ncincuenta+1;
+        }
+        else if(mon.obtenerValor()==100){
+            if(ncien==130) return;
+            monCien[ncien]=mon;
+            ncien=ncien+1;
+        }
+        else if(mon.obtenerValor()==500){
+            if(nquinientos==130) return;
+            monQuinientos[nquinientos]=mon;
+            nquinientos=nquinientos+1;
+        }
+    }
+}
+
+//  Clase abstracta de Bebidas, usada para generar distintas marcas de bebidas.
 abstract class Bebida{
     private int serie;
     public Bebida(int serie){
@@ -208,6 +330,7 @@ class Pepsi extends Bebida{
     }
 }
 
+//  Clase abstracta de moneda, usada para generar monedas de distintos valores.
 abstract class Moneda{
     public Moneda(){
         
