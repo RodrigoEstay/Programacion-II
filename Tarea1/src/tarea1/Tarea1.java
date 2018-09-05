@@ -50,7 +50,7 @@ public class Tarea1 {
 
 //  Clase comprador, el cual interactua con Expendedor.
 class Comprador{
-    private Moneda mon[];
+    private Moneda monedas[];
     private Expendedor maquina;
     private Bebida bebida;
     private int nmon;
@@ -59,7 +59,7 @@ class Comprador{
     // monedas, y se le hace conocer la maquina expendedora con la va a
     // interactuar.
     public Comprador(Expendedor ex){
-        mon = new Moneda[20];
+        monedas = new Moneda[20];
         nmon=0;
         maquina = ex;
         bebida=null;
@@ -68,7 +68,7 @@ class Comprador{
     //  Metodo para recibir monedas y almacenarlas.
     public void recibirMonedas(Moneda mon){
         if(nmon==20) nmon=nmon-1;
-        this.mon[nmon]=mon;
+        this.monedas[nmon]=mon;
         nmon=nmon+1;
     }
     
@@ -80,7 +80,7 @@ class Comprador{
         do{
             if(nmon==0) break;
             nmon=nmon-1;
-            bebida=maquina.comprarBebida(mon[nmon], beb);
+            bebida=maquina.comprarBebida(monedas[nmon], beb);
         }while(bebida==null);
     }
     
@@ -88,8 +88,8 @@ class Comprador{
     public void recibirVuelto(){
         while(true){
             if(nmon==20) nmon=nmon-1;
-            mon[nmon]=maquina.vuelto();
-            if(mon[nmon]==null) break;
+            monedas[nmon]=maquina.vuelto();
+            if(monedas[nmon]==null) break;
             nmon=nmon+1;
         }
     }
@@ -106,7 +106,7 @@ class Comprador{
         int i;
         System.out.print("tengo "+nmon+" monedas: ");
         for(i=0;i<nmon;i=i+1){
-            System.out.print(mon[i].obtenerValor()+" ");
+            System.out.print(monedas[i].obtenerValor()+" ");
         }
         System.out.println();
     }
@@ -115,13 +115,13 @@ class Comprador{
 //  La clase expendedor tiene 2 objetos internos: un deposito de bebidas
 // "deposito", un deposito de monedas "depositoMon".
 class Expendedor{
-    private DepositoBebidas deposito;
+    private DepositoBebidas depositoBeb;
     private DepositoMonedas depositoMon;
     private int valorTotal;
     
     //  Metodo constructor de Expendedor, se crean sus dos depositos.
     public Expendedor(int ncoca, int nsprite, int npepsi){
-        deposito = new DepositoBebidas(ncoca, nsprite, npepsi);
+        depositoBeb = new DepositoBebidas(ncoca, nsprite, npepsi);
         depositoMon = new DepositoMonedas(50);
     }
     
@@ -134,13 +134,13 @@ class Expendedor{
         if(valorTotal<350) return null;
         valorTotal=valorTotal-350;
         if(t=="cocacola"){
-            return deposito.retirarBebida(1);
+            return depositoBeb.retirarBebida(1);
         }
         else if(t=="sprite"){
-            return deposito.retirarBebida(2);
+            return depositoBeb.retirarBebida(2);
         }
         else if(t=="pepsi"){
-            return deposito.retirarBebida(3);
+            return depositoBeb.retirarBebida(3);
         }
         return null;
     }
