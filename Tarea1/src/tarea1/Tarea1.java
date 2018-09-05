@@ -5,10 +5,13 @@ public class Tarea1 {
     public Tarea1(){
         
     }
-    
+    //  main para crear comprador y expendedor. Tambien se usa para probar el
+    // funcionamiento de estos (ahora mismo tiene unos casos escritos para
+    // probar).
     public static void main(String[] args) {
         Expendedor ex = new Expendedor(5,5,5);
         Comprador com = new Comprador(ex);
+        
         int i;
         com.chequearMonedas();
         Moneda mon = new MQuinientos();
@@ -28,7 +31,6 @@ public class Tarea1 {
         Moneda m1 = new MCien();
         Moneda m2 = new MCien();
         Moneda m3 = new MQuinientos();
-        
         com.recibirMonedas(m1);
         com.recibirMonedas(m2);
         com.recibirMonedas(m3);
@@ -43,9 +45,7 @@ public class Tarea1 {
         com.chequearMonedas();
         com.recibirVuelto();
         com.chequearMonedas();
-        
-    }
-    
+    } 
 }
 
 //  Clase comprador, el cual interactua con Expendedor.
