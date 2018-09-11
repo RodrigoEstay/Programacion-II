@@ -8,14 +8,11 @@ import javax.swing.JPanel;
 
 public class Ventana extends JFrame {
     PanelDibujo dp;
-    Bandera s;
     public Ventana(){
         this.setLayout(new BorderLayout());
-        s = new Bandera();
-        this.add(s,BorderLayout.CENTER);
-        //dp = new PanelDibujo();
+        dp = new PanelDibujo();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);//cerrar aplicación
-        //this.add(dp,BorderLayout.CENTER);//se agrega al centro
+        this.add(dp,BorderLayout.CENTER);//se agrega al centro
         this.add(new JButton("boton"),BorderLayout.NORTH);
         JPanel jp = new JPanel();
         this.add(jp, BorderLayout.SOUTH);
