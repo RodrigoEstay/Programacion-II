@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 public class T2EstayM extends JFrame{
     
+    // Se crean botones y se ubican los paneles.
     public T2EstayM(){
         this.setSize(1000,700);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -52,9 +53,11 @@ public class T2EstayM extends JFrame{
         T2EstayM a = new T2EstayM();
     }
     
+    //  Los botones para escoger la forma que se quiere agregar, la forma
+    // escogida no tiene efecto alguno en el modo eliminar y modificar.
     private class BotonForma extends JRadioButton implements ActionListener{
-        int forma;
-        PanelDibujo dp;
+        private int forma;
+        private PanelDibujo dp;
         BotonForma(String nom, int forma, PanelDibujo dp){
             super(nom);
             this.dp=dp;
@@ -69,9 +72,10 @@ public class T2EstayM extends JFrame{
         
     }
     
+    // Se escoge el modo (agregar, eliminar y modificar).
     private class BotonModo extends JRadioButton implements ActionListener{
-        int modo;
-        PanelDibujo dp;
+        private int modo;
+        private PanelDibujo dp;
         BotonModo(String nom, int modo, PanelDibujo dp){
             super(nom);
             this.dp=dp;
