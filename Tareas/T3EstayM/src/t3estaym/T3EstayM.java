@@ -9,7 +9,7 @@ import javax.swing.*;
 
 public class T3EstayM extends JFrame{
     
-    PanelDibujo dp;
+    private Predio pd;
     
     public T3EstayM(){
         this.setSize(600,600);
@@ -37,10 +37,10 @@ public class T3EstayM extends JFrame{
         controles.add(playPause);
         controles.setBackground(Color.GRAY);
         velocidad2.setSelected(true);
-        dp = new PanelDibujo();
+        pd = new Predio();
         this.setLayout(new BorderLayout());
         this.add(controles,BorderLayout.NORTH);
-        this.add(dp,BorderLayout.CENTER);
+        this.add(pd,BorderLayout.CENTER);
         this.setVisible(true);
     }
     
@@ -60,7 +60,7 @@ public class T3EstayM extends JFrame{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            dp.cambiarVelocidad(velocidad);
+            pd.cambiarVelocidad(velocidad);
         }
         
     }
@@ -78,12 +78,12 @@ public class T3EstayM extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(esPlay){
-                dp.empezar();
+                pd.empezar();
                 this.setText("Pause");
                 esPlay=false;
             }
             else{
-                dp.detener();
+                pd.detener();
                 this.setText("Play");
                 esPlay=true;
             }
