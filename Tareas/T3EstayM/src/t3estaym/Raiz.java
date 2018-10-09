@@ -28,9 +28,9 @@ public class Raiz extends JPanel implements ActionListener{
         tronco=null;
     }
     
-    public void aumentarEdad(){
+    public void crecer(){
         edad++;
-        if(tronco!=null) tronco.aumentarEdad();
+        if(tronco!=null) tronco.crecer();
         else if(edad>100) tronco = new Rama(250,posX,posY,90.0);
     }
     
@@ -55,7 +55,7 @@ public class Raiz extends JPanel implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        aumentarEdad();
+        crecer();
         dp.repaint();
     }
     

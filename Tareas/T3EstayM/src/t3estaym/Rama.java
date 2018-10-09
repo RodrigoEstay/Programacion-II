@@ -8,12 +8,11 @@ import javax.swing.JPanel;
 public class Rama extends JPanel{
     
     private int tamano;
-    private double anguloR;
-    private double anguloG;
-    private int baseX;
-    private int baseY;
-    private int finalX;
-    private int finalY;
+    private double angulo;
+    private double baseX;
+    private double baseY;
+    private double actualX;
+    private double actualY;
     private int edad;
     private int cantRamas;
     ArrayList ramas;
@@ -23,26 +22,15 @@ public class Rama extends JPanel{
         this.tamano=tamano;
         this.baseX=baseX;
         this.baseY=baseY;
-        anguloG=angulo;
-        anguloR=Math.toRadians(angulo);
-        finalX=baseX+(int)(tamano*Math.cos(anguloR));
-        finalY=baseY-(int)(tamano*Math.sin(anguloR));
+        this.angulo=Math.toRadians(angulo);
+        actualX=baseX;
+        actualY=baseY;
         edad=0;
         cantRamas=4;
     }
     
     public void paint(Graphics g){
-        int x;
-        int y;
-        if(edad<100){
-            x=baseX+(finalX-baseX)*1/(100-edad);
-            y=baseY+(finalY-baseY)*1/(100-edad);
-        }
-        else{
-            x=finalX;
-            y=finalY;
-        }
-        g.drawLine(baseX,baseY,x,y);
+        g.drawLine((int)baseX,(int)baseY,(int)actualX,(int)actualY);
         Rama aux=null;
         for(int i=0; i<ramas.size() ; i++){
             aux=(Rama)ramas.get(i);
@@ -50,24 +38,45 @@ public class Rama extends JPanel{
         }
     }
     
-    public void aumentarEdad(){
+    public void crecer(){
         edad++;
         Rama aux=null;
-        if(tamano>70 && edad%100==0 && ramas.size()<=cantRamas){
-            double ang;
-            int tam=(int)(tamano*2.0/3.0);
-            int posX=baseX+(int)(tam*Math.cos(anguloR));
-            int posY=baseY-(int)(tam*Math.sin(anguloR));
-            if(edad==100) ang=anguloG-40.0;
-            else if(edad==200) ang=anguloG+40.0;
-            else ang=anguloG-10.0;
-            aux = new Rama(tam,posX,posY,ang);
-            ramas.add(aux);
+        if(edad<1000){
+            double difX=(1.0/1000.0)*(tamano*Math.cos(angulo));
+            double difY=(1.0/1000.0)*(tamano*Math.sin(angulo));
+            actualX+=difX;
+            actualY-=difY;
+            for(int j=0 ; j<ramas.size() ; j++){
+                aux=(Rama)ramas.get(j);
+                aux.moverRama(difX,difY);
+            }
         }
         for(int i=0; i<ramas.size() ; i++){
             aux=(Rama)ramas.get(i);
-            aux.aumentarEdad();
+            aux.crecer();
         }
+        if(tamano>70 && edad%300==0 && ramas.size()<=cantRamas) crearRama();
+    }
+    
+    public void crearRama(){
+        double ang;
+        int tam=(int)(tamano*2.0/3.0);
+        //int posX=(int)baseX+(int)(tam*Math.cos(angulo));
+        //int posY=(int)baseY-(int)(tam*Math.sin(angulo));
+        int posX=(int)(baseX+(2.0/3.0)*(actualX-baseX));
+        int posY=(int)(baseY+(2.0/3.0)*(actualY-baseY));
+        if(edad==300) ang=Math.toDegrees(angulo)-40.0;
+        else if(edad==600) ang=Math.toDegrees(angulo)+40.0;
+        else ang=Math.toDegrees(angulo)-10.0;
+        Rama aux = new Rama(tam,posX,posY,ang);
+        ramas.add(aux);
+    }
+    
+    public void moverRama(double sumX, double sumY){
+        baseX+=sumX;
+        baseY-=sumY;
+        actualX+=sumX;
+        actualY-=sumY;
     }
     
 }
