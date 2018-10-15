@@ -20,7 +20,7 @@ public class Raiz{
     public void crecer(){
         edad++;
         if(tronco!=null) tronco.crecer();
-        else if(edad>100) tronco = new Rama(250,posX,posY,90.0);
+        else if(edad>100) tronco = new Rama(250,posX,posY,90.0,true);
     }
     
     public void paint(Graphics g){

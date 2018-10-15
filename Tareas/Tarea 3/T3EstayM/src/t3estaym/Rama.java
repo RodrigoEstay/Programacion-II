@@ -21,8 +21,9 @@ public class Rama{
     private Random rand;
     private int ramasIzq;
     private int ramasDer;
+    private boolean esTronco;
     
-    public Rama(int tamano, int baseX, int baseY, double angulo){
+    public Rama(int tamano, int baseX, int baseY, double angulo, boolean esTronco){
         ramas = new ArrayList();
         hojas = new ArrayList();
         rand = new Random();
@@ -30,11 +31,12 @@ public class Rama{
         this.baseX=baseX;
         this.baseY=baseY;
         this.angulo=Math.toRadians(angulo);
+        this.esTronco=esTronco;
         actualX=baseX;
         actualY=baseY;
         edad=0;
         grosor=1;
-        maxRamas=rand.nextInt(5)+3;
+        maxRamas=rand.nextInt(7)+3;
         maxHojas=rand.nextInt(5)+10;
         ramasIzq=0;
         ramasDer=0;
@@ -86,7 +88,7 @@ public class Rama{
             aux2.crecer();
         }
         if(tamano>70 && edad%300==0 && ramas.size()<maxRamas) crearRama();
-        if(edad%100==0 && hojas.size()<maxHojas) crearHoja();
+        if(!esTronco && edad%100==0 && hojas.size()<maxHojas) crearHoja();
         if(edad%400==0 && grosor*50<tamano) grosor++;
     }
     
@@ -96,11 +98,11 @@ public class Rama{
         int posX=(int)(baseX+(2.0/3.0)*(actualX-baseX));
         int posY=(int)(baseY+(2.0/3.0)*(actualY-baseY));
         if(ramasDer>ramasIzq){
-            ang=Math.toDegrees(angulo)+rand.nextInt(30)-60;
+            ang=Math.toDegrees(angulo)-rand.nextInt(50)-10;
             ramasIzq++;
         }
         else if(ramasIzq>ramasDer){
-            ang=Math.toDegrees(angulo)+rand.nextInt(30)+30;
+            ang=Math.toDegrees(angulo)+rand.nextInt(50)+10;
             ramasDer++;
         }
         else{
@@ -108,13 +110,13 @@ public class Rama{
             if(ang-(Math.toDegrees(angulo))<0) ramasIzq++;
             else ramasDer++;
         }
-        Rama aux = new Rama(tam,posX,posY,ang);
+        Rama aux = new Rama(tam,posX,posY,ang,false);
         ramas.add(aux);
     }
     
     public void crearHoja(){
-        int posX=(int)(baseX+(2.0/3.0)*(actualX-baseX))+(rand.nextInt(6)-3);
-        int posY=(int)(baseY+(2.0/3.0)*(actualY-baseY))+(rand.nextInt(6)-3);
+        int posX=(int)(baseX+(2.0/3.0)*(actualX-baseX))+(rand.nextInt(4)-6);
+        int posY=(int)(baseY+(2.0/3.0)*(actualY-baseY));
         Hoja hoja = new Hoja(rand.nextDouble()+1,7,7,posX,posY);
         hojas.add(hoja);
     }
