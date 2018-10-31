@@ -104,10 +104,12 @@ public class ProyectoDiez extends JFrame{
             if(tipoControl==1){
                 this.setText("Pause");
                 tipoControl=0;
+                manejador.playPause(true);
             }
             else{
                 this.setText("Play");
                 tipoControl=1;
+                manejador.playPause(false);
             }
         }
         

@@ -87,6 +87,12 @@ public class Manejador extends JPanel implements MouseListener{
         almacen.crearFigura(x,y,vel,dir);
     }
     
+    public void playPause(boolean play){
+        if(play) tiempo.start();
+        else tiempo.stop();
+        System.out.println("aaa");
+    }
+    
     public void eliminarFigura(){
         
     }
@@ -107,6 +113,7 @@ public class Manejador extends JPanel implements MouseListener{
     public void mouseClicked(MouseEvent e) {
         if(modo==3) crearFigura(e.getX(),e.getY(),userVel,true);
         else if(modo==4) crearFigura(e.getX(),e.getY(),userVel,false);
+        repaint();
     }
 
     @Override
@@ -134,7 +141,9 @@ public class Manejador extends JPanel implements MouseListener{
         //Se hara avanzar las figuras.
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("No implementado aun.");
+            almacen.moverFormas();
+            almacen.detectarColision();
+            repaint();
         }
         
     }

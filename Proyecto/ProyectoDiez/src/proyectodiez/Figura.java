@@ -1,6 +1,7 @@
 
 package proyectodiez;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 
@@ -28,20 +29,23 @@ public class Figura {
         return posY;
     }
     
-    public void setX(int x){
-        System.out.println("No implementado aun.");
+    public boolean haColisionado(){
+        return colisiono;
     }
     
-    public void setY(int Y){
-        System.out.println("No implementado aun.");
+    public void moverse(){
+        posX+=Math.cos(direccion)*velocidad;
+        posY-=Math.sin(direccion)*velocidad;
     }
     
     public void colisionar(){
-        System.out.println("No implementado aun.");
+        colisiono=true;
     }
     
     public void paint(Graphics g){
-        
+        if(colisiono) g.setColor(Color.BLUE);
+        else g.setColor(Color.RED);
+        g.fillOval(posX-10, posY-10, 20, 20);
     }
     
 }
