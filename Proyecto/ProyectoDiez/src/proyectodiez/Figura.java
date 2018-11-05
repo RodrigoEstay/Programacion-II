@@ -29,6 +29,14 @@ public class Figura {
         return posY;
     }
     
+    public int getVel(){
+        return velocidad;
+    }
+    
+    public double getDir(){
+        return direccion;
+    }
+    
     public boolean haColisionado(){
         return colisiono;
     }
@@ -38,14 +46,19 @@ public class Figura {
         posY-=Math.sin(direccion)*velocidad;
     }
     
-    public void colisionar(){
+    public void colisionar(int velC, double dirC){
         colisiono=true;
+        int compX=(int)(Math.cos(direccion)*velocidad+Math.cos(dirC)*velC);
+        int compY=(int)(Math.sin(direccion)*velocidad+Math.sin(dirC)*velC);
+        velocidad=(int)(0.6*Math.sqrt(Math.pow(compX,2)+Math.pow(compY,2)));
+        if(compX==0) direccion=Math.toDegrees(270);
+        else direccion=Math.atan(compY/compX);
     }
     
     public void paint(Graphics g){
         if(colisiono) g.setColor(Color.BLUE);
         else g.setColor(Color.RED);
-        g.fillOval(posX-10, posY-10, 20, 20);
+        g.fillOval(posX-15, posY-15, 30, 30);
     }
     
 }

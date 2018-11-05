@@ -17,8 +17,13 @@ public class AlmacenFiguras {
         af.add(aux);
     }
     
-    public void eliminarFigura(){
-        System.out.println("No implementado aun.");
+    public void eliminarFiguras(){
+        Figura aux=null;
+        for(int i=0 ; i<af.size() ; i++){
+            aux=(Figura)af.get(i);
+            if(aux.getX()>900 || aux.getX()<0 || aux.getY()<0 || aux.getY()>700)
+                af.remove(i);
+        }
     }
     
     public void dibujarFiguras(Graphics g){
@@ -48,9 +53,9 @@ public class AlmacenFiguras {
                 if(i==j || aux2.haColisionado()) continue;
                 int difX=Math.abs(aux.getX()-aux2.getX());
                 int difY=Math.abs(aux.getY()-aux2.getY());
-                if(Math.sqrt(Math.pow(difX, 2)+Math.pow(difY, 2))<10){
-                    aux.colisionar();
-                    aux2.colisionar();
+                if(Math.sqrt(Math.pow(difX, 2)+Math.pow(difY, 2))<15){
+                    aux.colisionar(aux2.getVel(),aux2.getDir());
+                    aux2.colisionar(aux.getVel(),aux.getDir());
                 }
             }
         }

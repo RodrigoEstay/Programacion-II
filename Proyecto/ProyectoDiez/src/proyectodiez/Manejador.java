@@ -47,24 +47,28 @@ public class Manejador extends JPanel implements MouseListener{
             if(rand.nextInt(2)==1){
                 x=0;
                 dir=0;
-                int posHModo1=rand.nextInt(5);
+                int posHModo1=rand.nextInt(6);
                 if(posHModo1==0) y=100;
                 if(posHModo1==1) y=200;
                 if(posHModo1==2) y=300;
                 if(posHModo1==3) y=400;
                 if(posHModo1==4) y=500;
+                if(posHModo1==5) y=600;
             }
             else{
                 y=0;
                 dir=270;
-                int posVModo1=rand.nextInt(5);
-                if(posVModo1==0) y=100;
-                if(posVModo1==1) y=200;
-                if(posVModo1==2) y=300;
-                if(posVModo1==3) y=400;
-                if(posVModo1==4) y=500;
+                int posVModo1=rand.nextInt(8);
+                if(posVModo1==0) x=100;
+                if(posVModo1==1) x=200;
+                if(posVModo1==2) x=300;
+                if(posVModo1==3) x=400;
+                if(posVModo1==4) x=500;
+                if(posVModo1==5) x=600;
+                if(posVModo1==6) x=700;
+                if(posVModo1==7) x=800;
             }
-            vel=rand.nextInt(28)+3;
+            vel=rand.nextInt(13)+1;
         }
         else if(modo==2){
             if(rand.nextInt(2)==1){
@@ -91,10 +95,6 @@ public class Manejador extends JPanel implements MouseListener{
         if(play) tiempo.start();
         else tiempo.stop();
         System.out.println("aaa");
-    }
-    
-    public void eliminarFigura(){
-        
     }
     
     //Observamos si colisiona alguna figura.
@@ -141,9 +141,11 @@ public class Manejador extends JPanel implements MouseListener{
         //Se hara avanzar las figuras.
         @Override
         public void actionPerformed(ActionEvent e) {
+            almacen.eliminarFiguras();
             almacen.moverFormas();
             almacen.detectarColision();
             repaint();
+            if((modo==1 || modo==2) && rand.nextInt(3)==0) crearFigura(0,0,0,false); 
         }
         
     }
