@@ -1,5 +1,5 @@
 
-package proyectodiez;
+package ParteLogica;
 
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -17,15 +17,6 @@ public class AlmacenFiguras {
         af.add(aux);
     }
     
-    public void eliminarFiguras(){
-        Figura aux=null;
-        for(int i=0 ; i<af.size() ; i++){
-            aux=(Figura)af.get(i);
-            if(aux.getX()>900 || aux.getX()<0 || aux.getY()<0 || aux.getY()>700)
-                af.remove(i);
-        }
-    }
-    
     public void dibujarFiguras(Graphics g){
         Figura aux=null;
         for(int i=0 ; i<af.size() ; i++){
@@ -36,9 +27,12 @@ public class AlmacenFiguras {
     
     public void moverFormas(){
         Figura aux=null;
+        boolean estaFuera;
+        System.out.println(af.size());
         for(int i=0 ; i<af.size() ; i++){
             aux=(Figura)af.get(i);
-            aux.moverse();
+            estaFuera=aux.moverse();
+            if(estaFuera) af.remove(i);
         }
     }
     
@@ -52,11 +46,11 @@ public class AlmacenFiguras {
                 aux2=(Figura)af.get(j);
                 if(i==j || aux2.haColisionado()) continue;
                 int difX=Math.abs(aux.getX()-aux2.getX());
+                if(difX>30) continue;
                 int difY=Math.abs(aux.getY()-aux2.getY());
-                if(Math.sqrt(Math.pow(difX, 2)+Math.pow(difY, 2))<15){
-                    aux.colisionar(aux2.getVel(),aux2.getDir());
-                    aux2.colisionar(aux.getVel(),aux.getDir());
-                }
+                if(difY>30) continue;
+                aux.colisionar(aux2.getVel(),aux2.getDir());
+                aux2.colisionar(aux.getVel(),aux.getDir());
             }
         }
     }

@@ -1,6 +1,7 @@
 
-package proyectodiez;
+package Interfaz;
 
+import Interfaz.Manejador;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -94,13 +95,13 @@ public class ProyectoDiez extends JFrame{
         //Debera definir la creacion de pelotas o sera un boton play.
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(tipoControl==1 || tipoControl==0) PlayPause();
+            if(tipoControl==1 || tipoControl==0) playPause();
             if(tipoControl==2) manejador.cambiarModo(3);
             if(tipoControl==3) manejador.cambiarModo(4);
         }
         
         //Empezara la simulacion o la detiene.
-        public void PlayPause(){
+        public void playPause(){
             if(tipoControl==1){
                 this.setText("Pause");
                 tipoControl=0;

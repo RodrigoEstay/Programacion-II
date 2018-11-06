@@ -1,5 +1,5 @@
 
-package proyectodiez;
+package Interfaz;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,11 +10,11 @@ import java.awt.event.MouseListener;
 import java.util.Random;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import ParteLogica.AlmacenFiguras;
 
 
 public class Manejador extends JPanel implements MouseListener{
     
-    private Manejador yo;
     private Timer tiempo;
     private EventoTiempo et;
     private AlmacenFiguras almacen;
@@ -94,14 +94,7 @@ public class Manejador extends JPanel implements MouseListener{
     public void playPause(boolean play){
         if(play) tiempo.start();
         else tiempo.stop();
-        System.out.println("aaa");
     }
-    
-    //Observamos si colisiona alguna figura.
-    public void detectarColision(){
-        System.out.println("No implementado aun.");
-    }
-    
     
     // pintamos las figuras.
     public void paint(Graphics g){
@@ -138,10 +131,8 @@ public class Manejador extends JPanel implements MouseListener{
     
     private class EventoTiempo implements ActionListener{
         
-        //Se hara avanzar las figuras.
         @Override
         public void actionPerformed(ActionEvent e) {
-            almacen.eliminarFiguras();
             almacen.moverFormas();
             almacen.detectarColision();
             repaint();
