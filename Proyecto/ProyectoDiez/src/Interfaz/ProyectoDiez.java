@@ -1,7 +1,6 @@
 
 package Interfaz;
 
-import Interfaz.Manejador;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridLayout;
@@ -16,18 +15,25 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-
+/**
+ * Clase principal usada para la creacion de la ventana del programa.
+ * @author Rodrigo Estay
+ */
 public class ProyectoDiez extends JFrame{
     
     private BotonesControles bCrearH;
     private BotonesControles bCrearV;
     private SlideVelocidad velSlider;
-    private Manejador manejador;
+    private PanelDibujo dp;
     
     public static void main(String[] args) {
         ProyectoDiez a = new ProyectoDiez();
     }
     
+    /**
+     * Constructor de la clase que crea la ventana, botones, PanelDibujo y
+     * el slider de velocidad.
+     */
     public ProyectoDiez(){
         this.setSize(900,700);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -74,59 +80,92 @@ public class ProyectoDiez extends JFrame{
         panelUsuario.setBackground(Color.GRAY);
         
         //Anadimos el panel y empezamos con los valores iniciales.
-        manejador = new Manejador(1);
+        dp = new PanelDibujo();
         this.setLayout(new BorderLayout());
-        this.add(manejador,BorderLayout.CENTER);
+        this.add(dp,BorderLayout.CENTER);
         this.add(panelUsuario,BorderLayout.SOUTH);
         mUniforme.doClick();
         this.setVisible(true);
     }
     
+    /**
+     * Esta clase define botones para distintas funciones, actualmente, puede
+     * ser un boton para play, pause y definir direcciones. 
+     */
     private class BotonesControles extends JButton implements ActionListener{
         
         private int tipoControl;
         
+        /**
+         * Constructor del boton.
+         * @param nom nombre del boton.
+         * @param tipo tipo de control que sera el boton:
+         * 0 es pause.
+         * 1 es play.
+         * 2 es para crear figuras horizontales.
+         * 3 es para crear figuras verticales.
+         */
         public BotonesControles(String nom, int tipo){
             super(nom);
             tipoControl=tipo;
             this.addActionListener(this);
         }
 
-        //Debera definir la creacion de pelotas o sera un boton play.
+        /**
+         * Metodo ejecutado al apretar el boton.
+         * @param e Evento asociado a presionar el boton.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             if(tipoControl==1 || tipoControl==0) playPause();
-            if(tipoControl==2) manejador.cambiarModo(3);
-            if(tipoControl==3) manejador.cambiarModo(4);
+            if(tipoControl==2) dp.cambiarDir(true);
+            if(tipoControl==3) dp.cambiarDir(false);
         }
         
-        //Empezara la simulacion o la detiene.
-        public void playPause(){
+        /**
+         * Metodo privado para cuando se presione un boton de play o pause
+         * cambie a pause o play respectivamente y ejecute su funcion.
+         */
+        private void playPause(){
             if(tipoControl==1){
                 this.setText("Pause");
                 tipoControl=0;
-                manejador.playPause(true);
+                dp.playPause(true);
             }
             else{
                 this.setText("Play");
                 tipoControl=1;
-                manejador.playPause(false);
+                dp.playPause(false);
             }
         }
         
     }
     
+    /**
+     * Botones para seleccionar el modo en el que opera el programa.
+     */
     private class BotonModo extends JRadioButton implements ActionListener{
         
         private int modo;
         
+        /**
+         * Constructor del boton.
+         * @param nom nombre del modo.
+         * @param modo modo establecido por el boton:
+         * 1 modo uniforme.
+         * 2 modo aleatorio.
+         * 3 modo definido por el usuario.
+         */
         public BotonModo(String nom, int modo){
             super(nom);
             this.modo=modo;
             this.addActionListener(this);
         }
 
-        //Cambiara entre los modos posibles.
+        /**
+         * Metodo ejecutado al seleccionar el boton.
+         * @param e evento asociado a la seleccion del boton.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             if(modo==1 || modo==2){
@@ -139,21 +178,34 @@ public class ProyectoDiez extends JFrame{
                 bCrearV.setEnabled(true);
                 velSlider.setEnabled(true);
             }
-            manejador.cambiarModo(modo);
+            dp.cambiarModo(modo);
         }
         
     }
     
+    /**
+     * Slider para definir la velocidad escogida por el usuario.
+     */
     private class SlideVelocidad extends JSlider implements ChangeListener{
         
+        /**
+         * Contructor del slider.
+         * @param min minimo valor.
+         * @param max maximo valor.
+         * @param val valor predeterminado.
+         */
         public SlideVelocidad(int min, int max, int val){
             super(min,max,val);
             this.addChangeListener(this);
         }
 
+        /**
+         * Metodo ejecutado cada vez que se cambia el valor del slider.
+         * @param e evento asociado al cambio de estado del slider.
+         */
         @Override
         public void stateChanged(ChangeEvent e) {
-            manejador.cambiarVelocidad(this.getValue());
+            dp.cambiarVel(this.getValue());
         }
         
     }

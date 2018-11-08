@@ -1,19 +1,18 @@
 
-package Interfaz;
+package ParteLogica;
 
-import java.awt.Color;
+import Interfaz.PanelDibujo;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Random;
-import javax.swing.JPanel;
 import javax.swing.Timer;
-import ParteLogica.AlmacenFiguras;
 
-
-public class Manejador extends JPanel implements MouseListener{
+/**
+ * Clase que maneja la posicion de las figuras y sus respectivos moviemientos.
+ * @author Rodrigo Estay
+ */
+public class Manejador{
     
     private Timer tiempo;
     private EventoTiempo et;
@@ -22,25 +21,43 @@ public class Manejador extends JPanel implements MouseListener{
     private int userVel;
     private Random rand;
     
-    public Manejador(int modo){
+    /**
+     * Constructor.
+     * @param modo Define el modo predeterminado.
+     * @param dp Referencia al PanelDibujo para poder hacer repaint.
+     */
+    public Manejador(int modo, PanelDibujo dp){
         tiempo = new Timer(30,null);
-        et = new EventoTiempo();
+        et = new EventoTiempo(dp);
         almacen = new AlmacenFiguras();
         rand = new Random();
         tiempo.addActionListener(et);
-        this.addMouseListener(this);
-        this.setBackground(Color.white);
         this.modo=modo;
     }
     
+    /**
+     * Cambia el modo en el que se crean las figuras.
+     * @param modo Modo seleccionado.
+     */
     public void cambiarModo(int modo){
         this.modo=modo;
     }
     
+    /**
+     * Cambia la velocidad de las figuras para el modo definido por el usuario.
+     * @param vel velocidad escogida.
+     */
     public void cambiarVelocidad(int vel){
         userVel=vel;
     }
     
+    /**
+     * Crea las figuras.
+     * @param x posicion inicial en el eje x.
+     * @param y posicion inicial en el eje y.
+     * @param vel velocidad de la figura.
+     * @param esHorizontal define si es horizontal o vertical.
+     */
     public void crearFigura(int x, int y, int vel, boolean esHorizontal){
         double dir;
         if(modo==1){
@@ -88,54 +105,51 @@ public class Manejador extends JPanel implements MouseListener{
             else dir=270;
             if(vel==0) vel=rand.nextInt(28)+3;
         }
-        almacen.crearFigura(x,y,vel,dir);
+        int tipo=rand.nextInt(3);
+        almacen.crearFigura(x,y,vel,dir,tipo);
     }
     
+    /**
+     * Empieza o detiene el timer.
+     * @param play true para empezarlo y false para detenerlo.
+     */
     public void playPause(boolean play){
         if(play) tiempo.start();
         else tiempo.stop();
     }
     
-    // pintamos las figuras.
+    /**
+     * Metodo que pinta las figuras.
+     * @param g para poder dibujar las figuras.
+     */
     public void paint(Graphics g){
-        super.paint(g);
         almacen.dibujarFiguras(g);
     }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if(modo==3) crearFigura(e.getX(),e.getY(),userVel,true);
-        else if(modo==4) crearFigura(e.getX(),e.getY(),userVel,false);
-        repaint();
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        
-    }
     
+    /**
+     * Clase privada que ejecuta un evento cada cierto tiempo.
+     */
     private class EventoTiempo implements ActionListener{
         
+        private PanelDibujo dp;
+        
+        /**
+         * Contructor
+         * @param dp referencia a PanelDibujo para usar repaint.
+         */
+        public EventoTiempo(PanelDibujo dp){
+            this.dp=dp;
+        }
+        
+        /**
+         * Metodo ejecutado cada cierta cantidad de tiempo.
+         * @param e evento asociado al timer.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             almacen.moverFormas();
             almacen.detectarColision();
-            repaint();
+            dp.repaint();
             if((modo==1 || modo==2) && rand.nextInt(3)==0) crearFigura(0,0,0,false); 
         }
         
