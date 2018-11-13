@@ -45,6 +45,13 @@ public class AlmacenFiguras {
     }
     
     /**
+     * Elimina todas las figuras.
+     */
+    public void eliminarFiguras(){
+        af.clear();
+    }
+    
+    /**
      * Dibuja todas las figuras.
      * @param g graficos necesarios para dibujar las figuras.
      */
@@ -57,8 +64,8 @@ public class AlmacenFiguras {
     }
     
     /**
-     * Mueve todas las figuras, y si una vez movidas se salen del panel, se
-     * eliminan.
+     * Mueve todas las figuras, y si una vez movidas se salen del panel o
+     * colisionaron hace un tiempo, se eliminan.
      */
     public void moverFormas(){
         Figura aux=null;

@@ -17,9 +17,10 @@ public class Manejador{
     private Timer tiempo;
     private EventoTiempo et;
     private AlmacenFiguras almacen;
+    private Random rand;
     private int modo;
     private int userVel;
-    private Random rand;
+    private int contColision;
     
     /**
      * Constructor.
@@ -27,12 +28,20 @@ public class Manejador{
      * @param dp Referencia al PanelDibujo para poder hacer repaint.
      */
     public Manejador(int modo, PanelDibujo dp){
-        tiempo = new Timer(30,null);
+        tiempo = new Timer(10,null);
         et = new EventoTiempo(dp);
         almacen = new AlmacenFiguras();
         rand = new Random();
         tiempo.addActionListener(et);
         this.modo=modo;
+        contColision=0;
+    }
+    /**
+     * Metodo de consulta.
+     * @return devuelve el numero de colisiones que han ocurrido.
+     */
+    public int getColisiones(){
+        return contColision;
     }
     
     /**
@@ -50,32 +59,59 @@ public class Manejador{
     public void cambiarVelocidad(int vel){
         userVel=vel;
     }
+
+    public void cambiarTiempo(int tiemp){
+        tiempo.setDelay(55-tiemp);
+    }
+    
+    /**
+     * Metodo usado para reiniciar el manejador.
+     */
+    public void reiniciar(){
+        almacen.eliminarFiguras();
+        contColision=0;
+    }
     
     /**
      * Crea las figuras.
      * @param x posicion inicial en el eje x.
      * @param y posicion inicial en el eje y.
      * @param vel velocidad de la figura.
-     * @param esHorizontal define si es horizontal o vertical.
+     * @param esHorizontal define si es horizontal o vertical el movimiento de
+     * la figura.
      */
     public void crearFigura(int x, int y, int vel, boolean esHorizontal){
         double dir;
         if(modo==1){
             if(rand.nextInt(2)==1){
-                x=0;
-                dir=0;
-                int posHModo1=rand.nextInt(6);
+                if(rand.nextInt(2)==0){
+                    x=0;
+                    dir=0;
+                }
+                else{
+                    x=1300;
+                    dir=180;
+                }
+                int posHModo1=rand.nextInt(8);
                 if(posHModo1==0) y=100;
                 if(posHModo1==1) y=200;
                 if(posHModo1==2) y=300;
                 if(posHModo1==3) y=400;
                 if(posHModo1==4) y=500;
                 if(posHModo1==5) y=600;
+                if(posHModo1==6) y=700;
+                if(posHModo1==7) y=800;
             }
             else{
-                y=0;
-                dir=270;
-                int posVModo1=rand.nextInt(8);
+                if(rand.nextInt(2)==0){
+                    y=0;
+                    dir=270;
+                }
+                else{
+                    y=900;
+                    dir=90;
+                }
+                int posVModo1=rand.nextInt(12);
                 if(posVModo1==0) x=100;
                 if(posVModo1==1) x=200;
                 if(posVModo1==2) x=300;
@@ -84,26 +120,42 @@ public class Manejador{
                 if(posVModo1==5) x=600;
                 if(posVModo1==6) x=700;
                 if(posVModo1==7) x=800;
+                if(posVModo1==8) x=900;
+                if(posVModo1==9) x=1000;
+                if(posVModo1==10) x=1100;
+                if(posVModo1==11) x=1200;
             }
-            vel=rand.nextInt(13)+1;
+            vel=rand.nextInt(8)+1;
         }
         else if(modo==2){
             if(rand.nextInt(2)==1){
-                x=0;
-                dir=0;
-                y=rand.nextInt(590)+10;
+                if(rand.nextInt(2)==0){
+                    x=0;
+                    dir=0;
+                }
+                else{
+                    x=1300;
+                    dir=180;
+                }
+                y=rand.nextInt(800)+30;
             }
             else{
-                y=0;
-                dir=270;
-                x=rand.nextInt(590)+10;
+                if(rand.nextInt(2)==0){
+                    y=0;
+                    dir=270;
+                }
+                else{
+                    y=900;
+                    dir=90;
+                }
+                x=rand.nextInt(1200)+30;
             }
-            vel=rand.nextInt(28)+3;
+            vel=rand.nextInt(8)+1;
         }
         else{
             if(esHorizontal) dir=0;
             else dir=270;
-            if(vel==0) vel=rand.nextInt(28)+3;
+            if(vel==0) vel=rand.nextInt(8)+1;
         }
         int tipo=rand.nextInt(3);
         almacen.crearFigura(x,y,vel,dir,tipo);
@@ -126,8 +178,9 @@ public class Manejador{
                 if(difX>30) continue;
                 int difY=Math.abs(aux.getY()-aux2.getY());
                 if(difY>30) continue;
-                aux.colisionar(aux2.getVel(),aux2.getDir());
-                aux2.colisionar(aux.getVel(),aux.getDir());
+                aux.colisionar(aux2.getX(),aux2.getY());
+                aux2.colisionar(aux.getX(),aux.getY());
+                contColision++;
             }
         }
     }

@@ -54,6 +54,14 @@ public class PanelDibujo extends JPanel implements MouseListener{
     }
     
     /**
+     * Metodo usado para reiniciar el panel.
+     */
+    public void reiniciar(){
+        manejador.reiniciar();
+        repaint();
+    }
+    
+    /**
      * Metodo para dibujar las figuras y el fondo.
      * @param g Graphics usados para enviar como parametro a los paint de las
      * figuras.
@@ -61,6 +69,8 @@ public class PanelDibujo extends JPanel implements MouseListener{
     public void paint(Graphics g){
         super.paint(g);
         manejador.paint(g);
+        g.setColor(Color.BLACK);
+        g.drawString("Colisiones: "+manejador.getColisiones(), 1190, 770);
     }
     
     /**
@@ -80,6 +90,10 @@ public class PanelDibujo extends JPanel implements MouseListener{
      */
     public void cambiarVel(int vel){
         userVel=vel;
+    }
+    
+    public void cambiarTiempo(int tiemp){
+        manejador.cambiarTiempo(tiemp);
     }
 
     /**

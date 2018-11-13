@@ -6,9 +6,11 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Hashtable;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
@@ -23,7 +25,7 @@ public class ProyectoDiez extends JFrame{
     
     private BotonesControles bCrearH;
     private BotonesControles bCrearV;
-    private SlideVelocidad velSlider;
+    private Slider velSlider;
     private PanelDibujo dp;
     
     public static void main(String[] args) {
@@ -35,7 +37,7 @@ public class ProyectoDiez extends JFrame{
      * el slider de velocidad.
      */
     public ProyectoDiez(){
-        this.setSize(900,700);
+        this.setSize(1300,900);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         //Creacion panel modos.
@@ -55,7 +57,22 @@ public class ProyectoDiez extends JFrame{
         BotonesControles bPlayPause = new BotonesControles("Play",1);
         BotonesControles bCrearH = new BotonesControles("Crear Horizontal",2);
         BotonesControles bCrearV = new BotonesControles("Crear Vertical",3);
-        SlideVelocidad velSlider = new SlideVelocidad(0,100,0);
+        BotonesControles bReset = new BotonesControles("Reset", 4);
+        
+        Slider velSlider = new Slider(0,100,0,0);
+        Slider tiempSlider = new Slider(0,50,25,1);
+        Hashtable<Integer, JLabel> tablaVel = new Hashtable<Integer, JLabel>();
+        tablaVel.put(0, new JLabel("Rand"));
+        tablaVel.put(25, new JLabel("25"));
+        tablaVel.put(50, new JLabel("50"));
+        tablaVel.put(75, new JLabel("75"));
+        tablaVel.put(100, new JLabel("100"));
+        velSlider.setLabelTable(tablaVel);
+        Hashtable<Integer, JLabel> tablaTiempo = new Hashtable<Integer, JLabel>();
+        tablaTiempo.put(0, new JLabel("Lento"));
+        tablaTiempo.put(50, new JLabel("Rapido"));
+        tiempSlider.setLabelTable(tablaTiempo);
+        
         this.bCrearH=bCrearH;
         this.bCrearV=bCrearV;
         this.velSlider=velSlider;
@@ -64,8 +81,10 @@ public class ProyectoDiez extends JFrame{
         panelEditar.add(bCrearV);
         JPanel panelSlider = new JPanel();
         panelSlider.add(velSlider);
+        panelSlider.add(tiempSlider);
         JPanel panelPlayPauseUsuario = new JPanel();
         panelPlayPauseUsuario.add(bPlayPause);
+        panelPlayPauseUsuario.add(bReset);
         JPanel panelControlesUsuario = new JPanel();
         panelControlesUsuario.setLayout(new GridLayout(1,3));
         panelControlesUsuario.add(panelEditar);
@@ -104,6 +123,7 @@ public class ProyectoDiez extends JFrame{
          * 1 es play.
          * 2 es para crear figuras horizontales.
          * 3 es para crear figuras verticales.
+         * 4 es un boton para reiniciar el programa.
          */
         public BotonesControles(String nom, int tipo){
             super(nom);
@@ -118,8 +138,9 @@ public class ProyectoDiez extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             if(tipoControl==1 || tipoControl==0) playPause();
-            if(tipoControl==2) dp.cambiarDir(true);
-            if(tipoControl==3) dp.cambiarDir(false);
+            else if(tipoControl==2) dp.cambiarDir(true);
+            else if(tipoControl==3) dp.cambiarDir(false);
+            else if(tipoControl==4) dp.reiniciar();
         }
         
         /**
@@ -186,7 +207,9 @@ public class ProyectoDiez extends JFrame{
     /**
      * Slider para definir la velocidad escogida por el usuario.
      */
-    private class SlideVelocidad extends JSlider implements ChangeListener{
+    private class Slider extends JSlider implements ChangeListener{
+        
+        int tipo;
         
         /**
          * Contructor del slider.
@@ -194,9 +217,11 @@ public class ProyectoDiez extends JFrame{
          * @param max maximo valor.
          * @param val valor predeterminado.
          */
-        public SlideVelocidad(int min, int max, int val){
+        public Slider(int min, int max, int val, int tipoSlider){
             super(min,max,val);
             this.addChangeListener(this);
+            tipo=tipoSlider;
+            this.setPaintLabels(true);
         }
 
         /**
@@ -205,7 +230,8 @@ public class ProyectoDiez extends JFrame{
          */
         @Override
         public void stateChanged(ChangeEvent e) {
-            dp.cambiarVel(this.getValue());
+            if(tipo==0) dp.cambiarVel(this.getValue());
+            else if(tipo==1) dp.cambiarTiempo(this.getValue());
         }
         
     }

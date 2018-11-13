@@ -17,6 +17,7 @@ abstract public class Figura {
     protected double direccion;
     protected boolean colisiono;
     protected int tiempoRestante;
+    protected Color color;
     
     /**
      * Constructor
@@ -32,6 +33,7 @@ abstract public class Figura {
         direccion=Math.toRadians(dir);
         colisiono=false;
         tiempoRestante=30;
+        color=Color.RED;
     }
     
     /**
@@ -77,21 +79,22 @@ abstract public class Figura {
         posX+=Math.cos(direccion)*velocidad;
         posY-=Math.sin(direccion)*velocidad;
         if(colisiono) tiempoRestante--;
-        if(tiempoRestante<0 || posY>720 || posX>920 || posY<-20 || posX<-20) return true;
+        if(tiempoRestante<0 || posY>915 || posX>1315 || posY<-15 || posX<-15) return true;
         else return false;
     }
     
     /**
      * Colisiona con una figura y rebota con esta respecto a las velocidades y
      * direcciones tanto de esta figura como con la que colisiono.
-     * @param velC velocidad de la figura con la que colisiono.
-     * @param dirC direccion en radianes de la figura con la que colisiono.
+     * @param posX posicion X de la figura con la que colisiono.
+     * @param posY posicion Y de la figura con la que colisiono.
      */
-    public void colisionar(int velC, double dirC){
+    public void colisionar(int posX, int posY){
         colisiono=true;
-        int compX=(int)(Math.cos(direccion)*velocidad+Math.cos(dirC)*velC);
-        int compY=(int)(Math.sin(direccion)*velocidad+Math.sin(dirC)*velC);
-        velocidad=(int)(0.6*Math.sqrt(Math.pow(compX,2)+Math.pow(compY,2)));
+        color=color.BLUE;
+        int compX=posX-this.posX;
+        int compY=posY-this.posY;
+        velocidad=(int)(0.3*velocidad);
         if(compX==0) direccion=Math.toDegrees(270);
         else direccion=Math.atan(compY/compX);
     }
@@ -119,9 +122,8 @@ class Circulo extends Figura{
      */
     @Override
     public void paint(Graphics g) {
-        if(colisiono) g.setColor(Color.BLUE);
-        else g.setColor(Color.RED);
-        g.fillOval(posX, posY, 30, 30);
+        g.setColor(color);
+        g.fillOval(posX, posY, 30*tiempoRestante/30, 30*tiempoRestante/30);
     }
     
 }
@@ -141,9 +143,8 @@ class Cuadrado extends Figura{
      */
     @Override
     public void paint(Graphics g) {
-        if(colisiono) g.setColor(Color.BLUE);
-        else g.setColor(Color.RED);
-        g.fillRect(posX, posY, 30, 30);
+        g.setColor(color);
+        g.fillRect(posX, posY, 30*tiempoRestante/30, 30*tiempoRestante/30);
     }
     
 }
@@ -163,12 +164,11 @@ class Triangulo extends Figura{
      */
     @Override
     public void paint(Graphics g) {
-        if(colisiono) g.setColor(Color.BLUE);
-        else g.setColor(Color.RED);
+        g.setColor(color);
         Polygon p = new Polygon();
-        p.addPoint(posX, posY+30);
-        p.addPoint(posX+15, posY);
-        p.addPoint(posX+30, posY+30);
+        p.addPoint(posX, posY+30*tiempoRestante/30);
+        p.addPoint(posX+15*tiempoRestante/30, posY);
+        p.addPoint(posX+30*tiempoRestante/30, posY+30*tiempoRestante/30);
         g.fillPolygon(p);
     }
     
