@@ -17,7 +17,6 @@ public class Manejador{
     private AlmacenFiguras almacen;
     private Random rand;
     private int modo;
-    private int userVel;
     private int contColision;
     
     /**
@@ -47,14 +46,6 @@ public class Manejador{
     }
     
     /**
-     * Cambia la velocidad de las figuras para el modo definido por el usuario.
-     * @param vel velocidad escogida.
-     */
-    public void cambiarVelocidad(int vel){
-        userVel=vel;
-    }
-    
-    /**
      * Metodo usado para reiniciar el manejador.
      */
     public void reiniciar(){
@@ -63,14 +54,13 @@ public class Manejador{
     }
     
     /**
-     * Crea las figuras.
-     * @param x posicion inicial en el eje x.
-     * @param y posicion inicial en el eje y.
-     * @param vel velocidad de la figura.
-     * @param esHorizontal define si es horizontal o vertical el movimiento de
-     * la figura.
+     * Se crea una figura en posiciones y velocidades iniciales variadas
+     * dependiendo del modo seleccionado.
      */
-    public void crearFigura(int x, int y, int vel, boolean esHorizontal){
+    public void crearFigura(){
+        int x=0;
+        int y=0;
+        int vel=0;
         double dir;
         if(modo==1){
             if(rand.nextInt(3)!=0) return;
@@ -118,7 +108,7 @@ public class Manejador{
             }
             vel=rand.nextInt(8)+1;
         }
-        else if(modo==2){
+        else{
             if(rand.nextInt(3)!=0) return;
             if(rand.nextInt(2)==1){
                 if(rand.nextInt(2)==0){
@@ -144,17 +134,41 @@ public class Manejador{
             }
             vel=rand.nextInt(8)+1;
         }
-        else{
-            if(esHorizontal) dir=0;
-            else dir=270;
-            if(vel==0) vel=rand.nextInt(8)+1;
-        }
-        int tipo=rand.nextInt(3);
+        int tipo=rand.nextInt(2);
+        if(modo==4) tipo=0;
         almacen.crearFigura(x,y,vel,dir,tipo);
     }
     
     /**
-     * detecta si ha ocurrido alguna colision entre figuras.
+     * Metodo usado para crear figuras con posiciones y velocidad definidas
+     * por el usuario con el mouse.
+     * @param xi posicion inicial del mouse en el eje X al hacer click.
+     * @param yi posicion inicial del mouse en el eje Y al hacer click.
+     * @param xf posicion final del mouse en el eje X al hacer click.
+     * @param yf posicion final del mouse en el eje Y al hacer click.
+     */
+    public void mouseCrearFigura(int xi, int yi, int xf, int yf){
+        double dif=Math.sqrt((xf-xi)*(xf-xi)+(yf-yi)*(yf-yi));
+        double dir;
+        double difX=xf-xi;
+        double difY=yi-yf;
+        if(yi-yf==0) dir=270;
+        else dir=Math.toDegrees(Math.atan(difY/difX));
+        if(difX<0 && difY>0) dir+=180;
+        else if(difX<0 && difY<0) dir+=180;
+        else if(difX>0 && difY<0) dir+=360;
+        int vel;
+        if(dif>900) vel=30;
+        else vel=(int)(dif/30.0);
+        if(vel==0) vel=1;
+        int tipo=rand.nextInt(2);
+        if(modo==4) tipo=0;
+        almacen.crearFigura(xi, yi, vel, dir, tipo);
+    }
+    
+    /**
+     * detecta si ha ocurrido alguna colision entre figuras, y si ocurrio una,
+     * se manda la informacion correspondiente a las figuras para que reboten.
      */
     public void detectarColision(){
         almacen.moverFormas();
@@ -171,10 +185,21 @@ public class Manejador{
                 if(difX>30) continue;
                 int difY=Math.abs(aux.getY()-aux2.getY());
                 if(difY>30) continue;
-                int dir=(int)Math.atan(Math.sqrt(difX*difX+difY*difY));
-                
-                aux.colisionar(aux2.getX(),aux2.getY());
-                aux2.colisionar(aux.getX(),aux.getY());
+                double difT=Math.sqrt(difX*difX+difY*difY);
+                if(aux.getTipo()==0 && aux2.getTipo()==0){
+                    if(difT>30) continue;
+                }
+                if((aux.getTipo()==0 && aux2.getTipo()==1) || (aux.getTipo()==1 && aux2.getTipo()==0)){
+                    if(difT>36) continue;
+                }
+                double vel=aux.getVel();
+                double vel2=aux2.getVel();
+                double dir=aux.getDir();
+                double dir2=aux.getDir();
+                boolean des=true;
+                if(modo==4) des=false;
+                aux.colisionar(0,aux2.getX(),aux2.getY(),aux2.getVel(),des);
+                aux2.colisionar(difT,aux.getX(),aux.getY(),aux.getVel(),des);
                 contColision++;
             }
         }

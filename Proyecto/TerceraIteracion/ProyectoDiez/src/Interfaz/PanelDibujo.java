@@ -17,11 +17,10 @@ import javax.swing.Timer;
  */
 public class PanelDibujo extends JPanel implements MouseListener{
     
-    int userVel;
-    int posX;
-    boolean esHorizontal;
-    boolean mouseHabilit;
-    Manejador manejador;
+    private boolean crear;
+    private int mouseX;
+    private int mouseY;
+    private Manejador manejador;
     private Timer tiempo;
     private EventoTiempo et;
     
@@ -34,23 +33,22 @@ public class PanelDibujo extends JPanel implements MouseListener{
         et = new EventoTiempo();
         this.setBackground(Color.WHITE);
         this.addMouseListener(this);
-        mouseHabilit=false;
+        crear=false;
         tiempo.addActionListener(et);
     }
     
     /**
-     * Metodo para cambiar el modo en el que funciona el programa,
-     * normalmente solo hace cambiar el modo del manejador, pero si el
-     * modo es 3, entonces se habilita la creacion de figuras con el mouse.
+     * Metodo para cambiar el modo en el que funciona el programa.
      * @param modo modo elegido por el usuario los que son:
      * 1 modo uniforme.
      * 2 modo aleatorio.
-     * 3 modo definido por el usuario.
+     * 3 modo solo usuario.
+     * 4 modo sin desaparecer.
      */
     public void cambiarModo(int modo){
         manejador.cambiarModo(modo);
-        if(modo==3) mouseHabilit=true;
-        else mouseHabilit=false;
+        if(modo==3) crear=true;
+        else crear=false;
     }
     
     /**
@@ -84,48 +82,37 @@ public class PanelDibujo extends JPanel implements MouseListener{
     }
     
     /**
-     * Usado para cambiar las direcciones de las figuras creadas por el usuario.
-     * @param esHorizontal si es true se trata de una direccion horizontal, en
-     * caso contrario se trata de una direccion vertical.
+     * Metodo que cambia la frecuencia que se ejecuta el evento de tiempo.
+     * @param tiemp Define la velocidad del programa, mientras mayor, mas rapido
+     * es el programa.
      */
-    public void cambiarDir(boolean esHorizontal){
-        this.esHorizontal=esHorizontal;
-    }
-    
-    /**
-     * Defina la velocidad en la que se mueven las figuras creadas por el
-     * usuario.
-     * @param vel velocidad en la que se moveran las figuras creadas con el
-     * mouse.
-     */
-    public void cambiarVel(int vel){
-        userVel=vel;
-    }
-    
     public void cambiarTiempo(int tiemp){
         tiempo.setDelay(55-tiemp);
     }
 
-    /**
-     * Metodo usado para el click del mouse.
-     * @param e evento que se asocia al click del mouse.
-     */
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(mouseHabilit){
-            manejador.crearFigura(e.getX(),e.getY(),userVel,esHorizontal);
-            repaint();
-        }
+        
     }
 
+    /**
+     * Registra la posicion inicial del mouse al hacer click.
+     * @param e evento asociado a presionar algun boton del mouse.
+     */
     @Override
     public void mousePressed(MouseEvent e) {
-        
+        mouseX=e.getX();
+        mouseY=e.getY();
     }
 
+    /**
+     * Registra la posicion final del mouse al hacer click, y se crea una figura.
+     * @param e evento asociado a soltar un boton del mouse.
+     */
     @Override
     public void mouseReleased(MouseEvent e) {
-        
+        manejador.mouseCrearFigura(mouseX, mouseY, e.getX(), e.getY());
+        repaint();
     }
 
     @Override
@@ -138,6 +125,9 @@ public class PanelDibujo extends JPanel implements MouseListener{
         
     }
     
+    /**
+     * Clase interna que ejecuta los metodos dependientes del tiempo.
+     */
     private class EventoTiempo implements ActionListener{
         
         /**
@@ -148,7 +138,7 @@ public class PanelDibujo extends JPanel implements MouseListener{
         public void actionPerformed(ActionEvent e) {
             manejador.detectarColision();
             repaint();
-            if(!mouseHabilit) manejador.crearFigura(0,0,0,false); 
+            if(!crear) manejador.crearFigura(); 
         }
         
     }

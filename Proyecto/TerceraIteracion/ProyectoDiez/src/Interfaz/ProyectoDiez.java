@@ -23,9 +23,6 @@ import javax.swing.event.ChangeListener;
  */
 public class ProyectoDiez extends JFrame{
     
-    private BotonDireccion bCrearH;
-    private BotonDireccion bCrearV;
-    private Slider velSlider;
     private PanelDibujo dp;
     
     public static void main(String[] args) {
@@ -43,51 +40,37 @@ public class ProyectoDiez extends JFrame{
         //Creacion panel modos.
         BotonModo mUniforme = new BotonModo("Modo Uniforme", 1);
         BotonModo mAleatorio = new BotonModo("Modo Aleatorio", 2);
-        BotonModo mUsuario = new BotonModo("Definir Posiciones", 3);
+        BotonModo mUsuario = new BotonModo("Solo Usuario", 3);
+        BotonModo sinDesaparecer = new BotonModo("Sin Desaparecer", 4);
         ButtonGroup modos = new ButtonGroup();
         modos.add(mUniforme);
         modos.add(mAleatorio);
         modos.add(mUsuario);
+        modos.add(sinDesaparecer);
         JPanel panelModos = new JPanel();
         panelModos.add(mUniforme);
         panelModos.add(mAleatorio);
         panelModos.add(mUsuario);
+        panelModos.add(sinDesaparecer);
         
         //Creamos Panel de Controles.
         BotonPlayPause bPlayPause = new BotonPlayPause("Play");
-        BotonDireccion bCrearH = new BotonDireccion("Crear Horizontal",true);
-        BotonDireccion bCrearV = new BotonDireccion("Crear Vertical",false);
         BotonReinicio bReset = new BotonReinicio("Reset");
         
-        Slider velSlider = new Slider(0,100,0,0);
-        Slider tiempSlider = new Slider(0,50,25,1);
-        Hashtable<Integer, JLabel> tablaVel = new Hashtable<Integer, JLabel>();
-        tablaVel.put(0, new JLabel("Rand"));
-        tablaVel.put(25, new JLabel("25"));
-        tablaVel.put(50, new JLabel("50"));
-        tablaVel.put(75, new JLabel("75"));
-        tablaVel.put(100, new JLabel("100"));
-        velSlider.setLabelTable(tablaVel);
+        Slider tiempSlider = new Slider(0,54,45);
         Hashtable<Integer, JLabel> tablaTiempo = new Hashtable<Integer, JLabel>();
         tablaTiempo.put(0, new JLabel("Lento"));
         tablaTiempo.put(50, new JLabel("Rapido"));
         tiempSlider.setLabelTable(tablaTiempo);
         
-        this.bCrearH=bCrearH;
-        this.bCrearV=bCrearV;
-        this.velSlider=velSlider;
-        JPanel panelEditar = new JPanel();
-        panelEditar.add(bCrearH);
-        panelEditar.add(bCrearV);
         JPanel panelSlider = new JPanel();
-        panelSlider.add(velSlider);
         panelSlider.add(tiempSlider);
         JPanel panelPlayPauseUsuario = new JPanel();
         panelPlayPauseUsuario.add(bPlayPause);
         panelPlayPauseUsuario.add(bReset);
         JPanel panelControlesUsuario = new JPanel();
         panelControlesUsuario.setLayout(new GridLayout(1,3));
-        panelControlesUsuario.add(panelEditar);
+        panelControlesUsuario.add(new JPanel());
         panelControlesUsuario.add(panelPlayPauseUsuario);
         panelControlesUsuario.add(panelSlider);
         
@@ -106,17 +89,27 @@ public class ProyectoDiez extends JFrame{
         mUniforme.doClick();
         this.setVisible(true);
     }
-    
+    /**
+     * Clase usada para el boton que pausa y comienza el programa.
+     */
     private class BotonPlayPause extends JButton implements ActionListener{
         
         private boolean esPlay;
         
+        /**
+         * 
+         * @param nom nombre inicial del boton.
+         */
         public BotonPlayPause(String nom){
             super(nom);
             esPlay=true;
             this.addActionListener(this);
         }
-
+        
+        /**
+         * Metodo ejecutado al clickear el boton.
+         * @param e evento asociado al clickar el boton.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             if(esPlay){
@@ -133,13 +126,24 @@ public class ProyectoDiez extends JFrame{
         
     }
     
+    /**
+     * Clase usada para hacer el boton de reinicio.
+     */
     private class BotonReinicio extends JButton implements ActionListener{
 
+        /**
+         * 
+         * @param nom bombre del boton.
+         */
         public BotonReinicio(String nom){
             super(nom);
             this.addActionListener(this);
         }
         
+        /**
+         * Metodo ejecutado al clickear el boton.
+         * @param e evento asociado al clickar el boton.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             dp.reiniciar();
@@ -147,22 +151,6 @@ public class ProyectoDiez extends JFrame{
         
     }
     
-    private class BotonDireccion extends JButton implements ActionListener{
-        
-        private boolean esHorizontal;
-        
-        public BotonDireccion(String nom, boolean esHorizontal){
-            super(nom);
-            this.esHorizontal=esHorizontal;
-            this.addActionListener(this);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            dp.cambiarDir(esHorizontal);
-        }
-        
-    }
     
     /**
      * Botones para seleccionar el modo en el que opera el programa.
@@ -177,7 +165,8 @@ public class ProyectoDiez extends JFrame{
          * @param modo modo establecido por el boton:
          * 1 modo uniforme.
          * 2 modo aleatorio.
-         * 3 modo definido por el usuario.
+         * 3 modo solo usuario.
+         * 4 modo sin desaparecer.
          */
         public BotonModo(String nom, int modo){
             super(nom);
@@ -191,16 +180,6 @@ public class ProyectoDiez extends JFrame{
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(modo==1 || modo==2){
-                bCrearH.setEnabled(false);
-                bCrearV.setEnabled(false);
-                velSlider.setEnabled(false);
-            }
-            else if(modo==3){
-                bCrearH.setEnabled(true);
-                bCrearV.setEnabled(true);
-                velSlider.setEnabled(true);
-            }
             dp.cambiarModo(modo);
         }
         
@@ -211,18 +190,15 @@ public class ProyectoDiez extends JFrame{
      */
     private class Slider extends JSlider implements ChangeListener{
         
-        private int tipo;
-        
         /**
          * Contructor del slider.
          * @param min minimo valor.
          * @param max maximo valor.
          * @param val valor predeterminado.
          */
-        public Slider(int min, int max, int val, int tipoSlider){
+        public Slider(int min, int max, int val){
             super(min,max,val);
             this.addChangeListener(this);
-            tipo=tipoSlider;
             this.setPaintLabels(true);
         }
 
@@ -232,8 +208,7 @@ public class ProyectoDiez extends JFrame{
          */
         @Override
         public void stateChanged(ChangeEvent e) {
-            if(tipo==0) dp.cambiarVel(this.getValue());
-            else if(tipo==1) dp.cambiarTiempo(this.getValue());
+            dp.cambiarTiempo(this.getValue());
         }
         
     }

@@ -19,10 +19,17 @@ public class AlmacenFiguras {
         af = new ArrayList();
     }
     
+    /**
+     * @return retorna la cantidad de figuras que existen.
+     */
     public int getSize(){
         return af.size();
     }
     
+    /**
+     * @param i indice de la figura que se desea.
+     * @return retorna objeto de clase Figura almacenada en el indice anterior.
+     */
     public Figura getFigura(int i){
         return (Figura)af.get(i);
     }
@@ -33,14 +40,12 @@ public class AlmacenFiguras {
      * @param y posicion inicial en el eje y.
      * @param vel velocidad de la figura.
      * @param dir direccion de la figura en grados.
-     * @param tipo tipo de la figura, 0 es circulo, 1 es cuadrado y 2
-     * es triangulo.
+     * @param tipo tipo de la figura, 0 es circulo y 1 es cuadrado.
      */
     public void crearFigura(int x, int y, int vel, double dir, int tipo){
-        Figura aux;
+        Figura aux=null;
         if(tipo==0) aux = new Circulo(x,y,vel,dir);
         else if(tipo==1) aux = new Cuadrado(x,y,vel,dir);
-        else aux = new Triangulo(x,y,vel,dir);
         af.add(aux);
     }
     
@@ -70,7 +75,6 @@ public class AlmacenFiguras {
     public void moverFormas(){
         Figura aux=null;
         boolean estaFuera;
-        System.out.println(af.size());
         for(int i=0 ; i<af.size() ; i++){
             aux=(Figura)af.get(i);
             estaFuera=aux.moverse();

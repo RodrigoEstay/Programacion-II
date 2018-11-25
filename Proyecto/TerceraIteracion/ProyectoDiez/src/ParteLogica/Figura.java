@@ -11,9 +11,9 @@ import java.awt.Polygon;
  */
 abstract public class Figura {
     
-    protected int posX;
-    protected int posY;
-    protected int velocidad;
+    protected double posX;
+    protected double posY;
+    protected double velocidad;
     protected double direccion;
     protected boolean colisiono;
     protected int tiempoRestante;
@@ -40,20 +40,20 @@ abstract public class Figura {
      * @return posicion actual en el eje x.
      */
     public int getX(){
-        return posX;
+        return (int)posX;
     }
     
     /**
      * @return posicion actual en el eje y.
      */
     public int getY(){
-        return posY;
+        return (int)posY;
     }
     
     /**
      * @return velocidad de la figura.
      */
-    public int getVel(){
+    public double getVel(){
         return velocidad;
     }
     
@@ -84,21 +84,48 @@ abstract public class Figura {
     }
     
     /**
-     * Colisiona con una figura y rebota con esta respecto a las velocidades y
-     * direcciones tanto de esta figura como con la que colisiono.
-     * @param posX posicion X de la figura con la que colisiono.
-     * @param posY posicion Y de la figura con la que colisiono.
+     * Revisa si la figura debe desaparecer, y rebota con la figura dependiendo
+     * de la velocidad y posicion de la figura con la que choco respecto a esta
+     * figura. Tambien evite que dos figuras queden una dentro de otra evitando
+     * que se queden pegadas.
+     * @param difT diferencia total entre los centros de ambas figuras.
+     * @param x posicion en el eje x de la figura con la que se colisiono.
+     * @param y posicion en el eje x de la figura con la que se colisiono.
+     * @param vel velocidad de la figura con la que se colisiono.
+     * @param desaparecer true si la figura debe desaparecer despues de
+     * colisionar o false si es que no.
      */
-    public void colisionar(int compX, int compY, boolean desaparecer){
+    public void colisionar(double difT, int x, int y, double vel, boolean desaparecer){
         if(desaparecer){
             colisiono=true;
             color=color.BLUE;
         }
-        velocidad=(int)0.9*velocidad;
-        int miX=(int)Math.cos(direccion)*velocidad+compX;
-        int miY=(int)Math.sin(direccion)*velocidad+compY;
-        direccion=Math.atan(Math.sqrt(miX*miX+miY*miY));
+        velocidad=0.9*velocidad+vel*0.1;
+        double ang;
+        double difX=x-posX;
+        double difY=posY-y;
+        if (y-posY==0) ang=Math.toRadians(270);
+        else ang=Math.atan(difY/difX);
+        if(posX>x && posY>y) ang+=Math.toRadians(180);
+        else if(posX>x && posY<y) ang+=Math.toRadians(180);
+        else if(posX<x && posY<y) ang+=Math.toRadians(360);
+        direccion=ang+Math.toRadians(180);
+        if(direccion>Math.toRadians(360)) direccion-=Math.toRadians(360);
+        if(direccion<0) direccion+=Math.toRadians(360);
+        if(difT==0) return;
+        double difDist=30-difT;
+        posX-=Math.cos(ang)*difDist;
+        if(Math.cos(ang)*difDist>0) posX++;
+        else posX--;
+        posY+=Math.sin(ang)*difDist;
+        if(Math.sin(ang)*difDist>0) posY++;
+        else posY--;
     }
+    
+    /**
+     * @return 0 si es un circulo y 1 si es un cuadrado.
+     */
+    abstract public int getTipo();
     
     /**
      * Metodo abstracto para dibujar la figura.
@@ -124,7 +151,15 @@ class Circulo extends Figura{
     @Override
     public void paint(Graphics g) {
         g.setColor(color);
-        g.fillOval(posX, posY, 30*tiempoRestante/30, 30*tiempoRestante/30);
+        g.fillOval((int)posX, (int)posY, 30*tiempoRestante/30, 30*tiempoRestante/30);
+    }
+
+    /**
+     * @return siempre 0.
+     */
+    @Override
+    public int getTipo() {
+        return 0;
     }
     
 }
@@ -145,32 +180,15 @@ class Cuadrado extends Figura{
     @Override
     public void paint(Graphics g) {
         g.setColor(color);
-        g.fillRect(posX, posY, 30*tiempoRestante/30, 30*tiempoRestante/30);
-    }
-    
-}
-
-/**
- * @author Rodrigo Estay
- */
-class Triangulo extends Figura{
-    
-    public Triangulo(int x,int y,int vel,double dir){
-        super(x,y,vel,dir);
+        g.fillRect((int)posX, (int)posY, 30*tiempoRestante/30, 30*tiempoRestante/30);
     }
 
     /**
-     * Se dibuja un triangulo equilatero de altura 30 pixeles.
-     * @param g 
+     * @return siempre 1.
      */
     @Override
-    public void paint(Graphics g) {
-        g.setColor(color);
-        Polygon p = new Polygon();
-        p.addPoint(posX, posY+30*tiempoRestante/30);
-        p.addPoint(posX+15*tiempoRestante/30, posY);
-        p.addPoint(posX+30*tiempoRestante/30, posY+30*tiempoRestante/30);
-        g.fillPolygon(p);
+    public int getTipo() {
+        return 1;
     }
     
 }
